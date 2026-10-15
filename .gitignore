@@ -1,0 +1,16 @@
+node_modules/
+dist/
+dist-electron/
+release/
+release-*/
+*.sqlite*
+.env
+.env.*
+!.env.example
+*.log
+.test-data/
+.test-artifacts/
+work/
+outputs/
+before-restore-*.json
+FITCORE-*.json

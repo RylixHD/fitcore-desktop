@@ -1,0 +1,39 @@
+name: Windows build and tests
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 25
+    env:
+      FITCORE_TEST_CONTAINER: "1"
+      FITCORE_TEST_DIR: .test-data
+      FITCORE_SCREENSHOT_DIR: .test-artifacts
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test
+      - run: npm run build
+      - run: New-Item -ItemType Directory -Force .test-artifacts
+      - run: npm run test:guest
+      - run: npm run test:desktop
+      - run: npm run test:files
+      - run: npm run pack
+      - uses: actions/upload-artifact@v7
+        with:
+          name: FITCORE-Windows-x64
+          path: |
+            release/*.exe
+            release/win-unpacked/
+          if-no-files-found: error
+          retention-days: 14
